@@ -1,32 +1,53 @@
 # Website Security & Resilience Audit Template
 
 ## What This Is
-A reusable defensive workspace template for auditing your web application's local source code for security vulnerabilities (OWASP Top 10) and server performance/resilience bottlenecks (missing rate limits, unbounded queries, memory leaks, missing timeouts) using AI coding agents.
+A reusable, enterprise-grade 360° defensive workspace template for auditing software and web application codebases across all security domains:
+1. **Application Security (OWASP Top 10 A01–A10, ASVS & CWE)**
+2. **Framework, API, GraphQL, WebSocket & AI/LLM Security (OWASP LLM Top 10)**
+3. **BaaS (Supabase RLS / Firebase Rules), OAuth2/MFA, Financial Ledgers & Client-Side DOM/Storage Security**
+4. **Infrastructure, Docker/Containers, CI/CD Pipelines (GitHub Actions), Reverse Proxy & Supply Chain Security**
+5. **Server Resilience, Performance Bottlenecks & DoS/Resource-Exhaustion Prevention**
 
 ## Scope & Safety Principles
-- **Defensive Static Source Code Review Only** — all analysis operates strictly on local source code, configuration files, and dependency manifests.
+- **Defensive Static Source Code & Config Review Only** — all analysis operates strictly on local source code, database migrations, container/CI-CD manifests, configuration files, and dependency lockfiles.
 - **No Offensive Payloads or Live Traffic Flooding** — never generate functional exploit payloads or send automated load/DoS traffic against live servers.
-- **Actionable Patching** — every finding includes exact file/line references, root-cause analysis, and production-ready defensive code fixes.
+- **Source-to-Sink Taint Verification** — every candidate issue is traced from untrusted input source through guards/validators/RLS policies to the sensitive sink to eliminate false positives before reporting.
+- **Standardized CWE & CVSS Classification** — every finding is tagged with an ID (`SEC-xxx`, `INF-xxx`, `RES-xxx`), CVSS-aligned Severity, Security Domain, and `CWE-ID`, with exact file/line references and production-ready defensive patches.
+
+## Supported Application & Infrastructure Stacks
+- **JavaScript / TypeScript**: Next.js (App Router, Server Actions, RSC, API Routes), React, Node.js, Express, NestJS, Prisma, Drizzle, GraphQL, Socket.io
+- **PHP**: Laravel, Symfony, Native PHP, Eloquent, Blade, Livewire
+- **Python**: FastAPI, Django, Flask, SQLAlchemy, Pydantic
+- **BaaS, Databases & Payments**: PostgreSQL, Supabase (RLS), Firebase (Firestore/Storage Rules), MongoDB, Redis, Stripe, Midtrans, Xendit
+- **AI / LLM & Infrastructure**: OpenAI/Anthropic/Gemini integrations, Docker, Docker Compose, GitHub Actions, GitLab CI, Nginx, Apache
 
 ## Project Structure
 ```text
 docs/
   security-audit/
     <project>/
-      surface-map.md     # Inventory of routes, auth boundaries, and data sinks
-      report.md          # Full vulnerability & resilience audit report with patches
+      surface-map.md     # 360° threat model & inventory of routes, auth, BaaS/RLS, and infra
+      report.md          # Standardized CWE/CVSS vulnerability, infra & resilience audit report
 .agents/
   skills/
     audit-website-security/
-      SKILL.md           # Canonical 4-stage defensive audit & hardening workflow
+      SKILL.md           # Canonical 4-stage defensive audit, taint-tracing & hardening workflow
+      scripts/
+        audit-recon.mjs  # Read-only static sink & runtime CVE scanner (PHP2Shell, Next.js, OWASP sinks)
       references/
-        owasp-code-review.md            # OWASP Top 10 source code checklist
-        resilience-and-rate-limiting.md # Server lag/DoS prevention & query hardening guide
+        owasp-code-review.md                   # OWASP Top 10 (A01–A10), API Top 10, ASVS & CWE checklist
+        framework-and-ai-security.md           # Next.js, Node, PHP/Laravel (PHP2Shell), Python, GraphQL, WebSocket & LLM
+        baas-auth-and-payment-security.md      # Supabase RLS, Firebase, OAuth2/MFA, payment ledgers & client DOM
+        infrastructure-cicd-and-supply-chain.md # Docker, GitHub Actions CI/CD, Nginx/Cache Poisoning & supply chain
+        resilience-and-rate-limiting.md        # Server lag/DoS prevention, ReDoS, memory & DB pool hardening
+        real-world-breach-playbooks-and-cves.md # Real-world mass breach vectors, classic flaws & high-impact CVEs
+        report-templates.md                    # CVSS severity rubric & Markdown templates for deliverables
 .claude/
   commands/
     audit-website-security.md # Thin command invocation bridge
 ```
 
 ## Agent Workflow
-- Use `.agents/skills/audit-website-security/SKILL.md` when the user provides a local project folder or source code to audit and harden.
-- Save audit outputs under `docs/security-audit/<project>/`.
+- Read `.agents/skills/audit-website-security/SKILL.md` and its linked references in `.agents/skills/audit-website-security/references/` when auditing or hardening a local codebase.
+- Default to **Read-Only Audit Mode** unless the user asks to apply defensive patches directly to the target project.
+- Save all audit deliverables under `docs/security-audit/<project>/` following `references/report-templates.md`.
