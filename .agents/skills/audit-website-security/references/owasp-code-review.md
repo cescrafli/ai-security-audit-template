@@ -135,21 +135,41 @@ export async function updateOrderAddress(rawInput: unknown) {
 }
 ```
 
-### 2. SSRF-Safe Outbound URL Validator (Node.js)
+### 2. SSRF-Safe Outbound URL Validator & Fetch Wrapper (Node.js)
 ```ts
 import dns from 'node:dns/promises';
 import net from 'node:net';
 
-const PRIVATE_IP_REGEX =
-  /^(127\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[0-1])\.|169\.254\.|0\.|100\.(6[4-9]|[7-9]\d|1[0-1]\d|12[0-7])\.|::1$|fc00:|fe80:)/i;
+function isPrivateOrReservedIp(ip: string): boolean {
+  const normalized = ip.toLowerCase().replace(/^::ffff:/, '');
+  if (net.isIPv4(normalized)) {
+    return (
+      /^(127\.|10\.|0\.|169\.254\.|192\.168\.)/.test(normalized) ||
+      /^172\.(1[6-9]|2\d|3[0-1])\./.test(normalized) ||
+      /^100\.(6[4-9]|[7-9]\d|1[0-1]\d|12[0-7])\./.test(normalized)
+    );
+  }
+  return (
+    normalized === '::1' ||
+    normalized === '::' ||
+    /^(fc|fd|fe8|fe9|fea|feb)/.test(normalized)
+  );
+}
 
-export async function assertSafeExternalUrl(rawUrl: string): Promise<URL> {
+export async function safeExternalFetch(rawUrl: string): Promise<Response> {
   const parsed = new URL(rawUrl);
   if (parsed.protocol !== 'https:') throw new Error('Only HTTPS URLs are allowed');
-  const { address } = await dns.lookup(parsed.hostname);
-  if (!net.isIP(address) || PRIVATE_IP_REGEX.test(address)) {
-    throw new Error('Blocked private or link-local destination IP');
+
+  // Resolve ALL A/AAAA records to prevent round-robin & IPv4-mapped IPv6 bypasses
+  const records = await dns.lookup(parsed.hostname, { all: true, verbatim: true });
+  if (records.length === 0 || records.some((r) => !net.isIP(r.address) || isPrivateOrReservedIp(r.address))) {
+    throw new Error('Blocked private, loopback, or reserved destination IP');
   }
-  return parsed;
+
+  // Disable automatic redirects (blocks 302 -> 169.254.169.254); pin resolved IP on custom agent for TTL-0 rebinding defense
+  return await fetch(parsed, {
+    redirect: 'error',
+    signal: AbortSignal.timeout(5000),
+  });
 }
 ```

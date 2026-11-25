@@ -5,7 +5,14 @@ Thumbs.db
 .idea/
 .vscode/
 
+# Dependencies & Build
+node_modules/
+
 # Environment files
 .env
 .env.*
 !.env.example
+
+# Generated audit reports (prevent accidental commit of private vulnerability findings)
+docs/security-audit/*
+!docs/security-audit/.gitkeep

@@ -61,14 +61,17 @@ Assign severity objectively based on exploitability, authentication requirements
 
 ## 1. Executive Summary
 
-<2–3 sentence assessment of the application's overall security and resilience posture across application code, auth/BaaS, financial logic, infrastructure/CI-CD, and server availability.>
+<2–3 sentence assessment of the application's overall security and resilience posture across application/auth/payment code (`SEC`), runtime/infrastructure/CI-CD (`INF`), and server availability (`RES`).>
 
-| Severity | AppSec & Framework (`SEC`) | Auth, BaaS & Payment (`SEC`) | Infra, CI/CD & Supply Chain (`INF`) | Resilience & DoS (`RES`) | Total | Status |
-| :--- | :---: | :---: | :---: | :---: | :---: | :--- |
-| **Critical** | 0 | 0 | 0 | 0 | 0 | <Open / Patched> |
-| **High** | 0 | 0 | 0 | 0 | 0 | <Open / Patched> |
-| **Medium** | 0 | 0 | 0 | 0 | 0 | <Open / Patched> |
-| **Low / Info** | 0 | 0 | 0 | 0 | 0 | <Open / Patched> |
+| Severity | App, Auth, BaaS & Payment (`SEC`) | Runtime, Infra, CI/CD & Supply Chain (`INF`) | Resilience & DoS (`RES`) | Total | Status |
+| :--- | :---: | :---: | :---: | :---: | :--- |
+| **Critical** | 0 | 0 | 0 | 0 | <Open / Patched> |
+| **High** | 0 | 0 | 0 | 0 | <Open / Patched> |
+| **Medium** | 0 | 0 | 0 | 0 | <Open / Patched> |
+| **Low / Info** | 0 | 0 | 0 | 0 | <Open / Patched> |
+
+### Compound Risk & Vulnerability Chaining Summary
+<Briefly highlight if any findings combine into a higher-severity attack chain (e.g., Open Redirect + OAuth Callback, Missing Proxy Trust + Login Rate Limit, or File Upload + Path Traversal), or state "No compound exploit chains identified.">
 
 ---
 

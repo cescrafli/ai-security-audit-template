@@ -49,5 +49,5 @@ docs/
 
 ## Agent Workflow
 - Read `.agents/skills/audit-website-security/SKILL.md` and its linked references in `.agents/skills/audit-website-security/references/` when auditing or hardening a local codebase.
-- Default to **Read-Only Audit Mode** unless the user asks to apply defensive patches directly to the target project.
-- Save all audit deliverables under `docs/security-audit/<project>/` following `references/report-templates.md`.
+- Default to **Read-Only Audit Mode (`readonly`)** unless the user explicitly passes `patch` or asks to apply defensive fixes to the target project.
+- Save audit deliverables (`surface-map.md` and `report.md`) under `docs/security-audit/<project>/` following `references/report-templates.md` (git-ignored by default so private vulnerability reports are never accidentally committed).
